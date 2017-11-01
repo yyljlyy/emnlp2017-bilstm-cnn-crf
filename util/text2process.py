@@ -16,6 +16,7 @@ import jieba
 import numpy as np
 from six.moves import xrange
 import tensorflow as tf
+import sys
 
 
 # Step 1: Download the data.
@@ -36,22 +37,27 @@ def read_data():
 
     # 读取文本，预处理，分词，得到词典
     raw_word_list = []
-    with open('17-11-1.csv', "r") as f:
+    with open('17-11-2.csv', "r") as f:
         line = f.readline()
         while line:
             html_parser = HTMLParser.HTMLParser()
-            line = html_parser.unescape(line.strip().split(",")[0].replace(" ", "").decode("utf8"))
-            if len(line) > 0:  # 如果句子非空
-                raw_words = list(jieba.cut(line, cut_all=False))
-                raw_word_list.extend(raw_words)
-            line = f.readline()
-    return raw_word_list
-
-
-# step 1:读取文件中的内容组成一个列表
+            split = line.strip().split(",")
+            if len(split) > 1:
+                line = html_parser.unescape(split[1].replace(" ", "").decode("utf8"))
+                if len(line) > 0:  # 如果句子非空
+                    print(line)
+                    raw_words = []
+                    for l in list(jieba.cut(line, cut_all=False)):
+                        if l not in stop_words:
+                            raw_words.append(l)
+                    raw_word_list.extend(raw_words)
+                line = f.readline()
+    return raw_word_list  # step 1:读取文件中的内容组成一个列表
 words = read_data()
 print('Data size', len(words))
-
+with open("text8", "w") as wf:
+    for w in words:
+        wf.write(w.encode("utf8") + " ")
 # Step 2: Build the dictionary and replace rare words with UNK token.
 vocabulary_size = 50000
 
