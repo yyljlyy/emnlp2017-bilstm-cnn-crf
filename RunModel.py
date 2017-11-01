@@ -1,5 +1,5 @@
 #!/usr/bin/python
-#Usage: python RunModel.py modelPath inputPath"
+# Usage: python RunModel.py modelPath inputPath"
 from __future__ import print_function
 import nltk
 from util.preprocessing import addCharInformation, createMatrices, addCasingInformation
@@ -16,11 +16,9 @@ inputPath = sys.argv[2]
 with open(inputPath, 'r') as f:
     text = f.read()
 
-
 # :: Load the model ::
 lstmModel = BiLSTM()
 lstmModel.loadModel(modelPath)
-
 
 # :: Prepare the input ::
 sentences = [{'tokens': nltk.word_tokenize(sent)} for sent in nltk.sent_tokenize(text)]
@@ -31,7 +29,6 @@ dataMatrix = createMatrices(sentences, lstmModel.mappings)
 
 # :: Tag the input ::
 tags = lstmModel.tagSentences(dataMatrix)
-
 
 # :: Output to stdout ::
 for sentenceIdx in range(len(sentences)):

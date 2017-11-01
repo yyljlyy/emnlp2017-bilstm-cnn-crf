@@ -21,7 +21,6 @@ formatter = logging.Formatter('%(message)s')
 ch.setFormatter(formatter)
 logger.addHandler(ch)
 
-
 ######################################################
 #
 # Data preprocessing
@@ -29,22 +28,21 @@ logger.addHandler(ch)
 ######################################################
 
 posName = 'unidep_pos'
-posColumns = {1:'tokens', 3:'POS'}
+posColumns = {1: 'tokens', 3: 'POS'}
 
 chunkingName = 'conll2000_chunking'
-chunkingColumns = {0:'tokens', 1:'POS', 2:'chunk_BIO'}
-
+chunkingColumns = {0: 'tokens', 1: 'POS', 2: 'chunk_BIO'}
 
 datasetFiles = [
-        (posName, posColumns),
-        (chunkingName, chunkingColumns)
-    ]
+    (posName, posColumns),
+    (chunkingName, chunkingColumns)
+]
 
-embeddingsPath = 'levy_deps.words' #Word embeddings by Levy et al: https://levyomer.wordpress.com/2014/04/25/dependency-based-word-embeddings/
+embeddingsPath = 'levy_deps.words'
+# Word embeddings by Levy et al: https://levyomer.wordpress.com/2014/04/25/dependency-based-word-embeddings/
 
 # :: Prepares the dataset to be used with the LSTM-network. Creates and stores cPickle files in the pkl/ folder ::
 pickleFile = perpareDataset(embeddingsPath, datasetFiles)
-
 
 ######################################################
 #
@@ -53,21 +51,15 @@ pickleFile = perpareDataset(embeddingsPath, datasetFiles)
 ######################################################
 
 
-#Load the embeddings and the dataset
+# Load the embeddings and the dataset
 embeddings, word2Idx, datasets = loadDatasetPickle(pickleFile)
-
 
 datasetTuples = {
     'POS': (datasets[posName], 'POS', True),
-    'Chunking': (datasets[chunkingName], 'chunk_BIO', True)    
-    }
-
+    'Chunking': (datasets[chunkingName], 'chunk_BIO', True)
+}
 
 params = {'classifier': ['CRF'], 'LSTM-Size': [100], 'dropout': (0.25, 0.25), 'charEmbeddings': False}
 
-
 model = MultiTaskLSTM(embeddings, datasetTuples, params=params)
 model.evaluate(25)
-
-
-

@@ -1,3 +1,5 @@
+matplotlib
+sklearn
 Keras==1.2.2
 nltk==3.2.2
 numpy>=1.12.0

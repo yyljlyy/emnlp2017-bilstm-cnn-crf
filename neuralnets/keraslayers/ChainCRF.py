@@ -13,13 +13,14 @@ from keras.engine import Layer, InputSpec
 
 if K._BACKEND == 'tensorflow':
     import tensorflow as tf
-    
+
+
     def logsumexp(x, axis=None):
         '''Returns `log(sum(exp(x), axis=axis))` with improved numerical stability.
         '''
         return tf.reduce_logsumexp(x, axis=[axis])
-    
-    
+
+
     def batch_gather(reference, indices):
         '''Batchwise gathering of row indices.
     
@@ -40,14 +41,16 @@ if K._BACKEND == 'tensorflow':
         return tf.gather_nd(reference, indices)
 else:
     import theano.tensor as T
+
+
     def logsumexp(x, axis=None):
         '''Returns `log(sum(exp(x), axis=axis))` with improved numerical stability.
         '''
         xmax = K.max(x, axis=axis, keepdims=True)
         xmax_ = K.max(x, axis=axis)
         return xmax_ + K.log(K.sum(K.exp(x - xmax), axis=axis))
-    
-    
+
+
     def batch_gather(reference, indices):
         '''Batchwise gathering of row indices.
     
@@ -65,6 +68,7 @@ else:
         '''
         batch_size = K.shape(reference)[0]
         return reference[T.arange(batch_size), indices]
+
 
 def path_energy(y, x, U, b_start=None, b_end=None, mask=None):
     '''Calculates the energy of a tag path y for a given input x (with mask),
@@ -287,6 +291,7 @@ class ChainCRF(Layer):
     return a tensor of shape (batch_size, 1) and not (batch_size, maxlen).
     that sample weighting in temporal mode.
     '''
+
     def __init__(self, init='glorot_uniform',
                  U_regularizer=None, b_start_regularizer=None, b_end_regularizer=None,
                  U_constraint=None, b_start_constraint=None, b_end_constraint=None,
@@ -338,13 +343,13 @@ class ChainCRF(Layer):
                                  regularizer=self.U_regularizer,
                                  constraint=self.U_constraint)
 
-        self.b_start = self.add_weight((n_classes, ),
+        self.b_start = self.add_weight((n_classes,),
                                        initializer='zero',
                                        name='{}_b_start'.format(self.name),
                                        regularizer=self.b_start_regularizer,
                                        constraint=self.b_start_constraint)
 
-        self.b_end = self.add_weight((n_classes, ),
+        self.b_end = self.add_weight((n_classes,),
                                      initializer='zero',
                                      name='{}_b_end'.format(self.name),
                                      regularizer=self.b_end_regularizer,
@@ -410,12 +415,11 @@ def create_custom_objects():
     return {'ChainCRF': ClassWrapper, 'loss': loss, 'sparse_loss': sparse_loss}
 
 
-
-
 if __name__ == '__main__':
     from keras.models import Sequential
     from keras.layers import Embedding
     import numpy as np
+
     vocab_size = 20
     n_classes = 11
     model = Sequential()
@@ -430,9 +434,6 @@ if __name__ == '__main__':
     y = np.random.randint(n_classes, size=(batch_size, maxlen))
     y = np.eye(n_classes)[y]
     model.train_on_batch(x, y)
-    
-    
-    
+
     print(x)
     print(y)
-    

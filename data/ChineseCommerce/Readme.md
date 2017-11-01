@@ -1,0 +1,7 @@
+• Person (PER)
+• Organization (ORG)
+• Location (LOC)
+• Miscellaneous (MISC)
+• Goods (GDS)
+• Model (MOD)
+• Brand (BRA)
